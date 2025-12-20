@@ -13,7 +13,7 @@ Discovering which n8n workflows are actually popular is difficult because data i
 	•	Community forum discussions
 	•	Search trends
 
-This system aggregates those signals into a single normalized database and exposes them via a REST API.
+This system aggregates those signals into a single normalized database and exposes them via a REST API
 
 ⸻
 
