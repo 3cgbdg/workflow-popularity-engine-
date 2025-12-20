@@ -195,22 +195,3 @@ It demonstrates:
 
 ⸻
 
-📌 Next Steps
-	•	Implement Discourse (n8n forum) ingestion
-	•	Add Google Trends data
-	•	Enable cron scheduling
-	•	Add ranking & pagination endpoints
-	•	Finalize documentation
-
-⸻
-
-📄 License
-
-MIT
-
-⸻
-
-
-Once this README is live, your repo will look like a serious backend/data engineering project, not a student experiment.
-
-When you’re ready, we’ll attack Discourse ingestion next.
