@@ -1,197 +1,76 @@
 Workflow Popularity Engine
 
-A production-ready backend system that tracks and ranks popular n8n workflows across multiple platforms (YouTube, community forums, and search trends) using real, verifiable popularity signals.
+Overview
+Workflow Popularity Engine is a production-ready backend service that tracks and ranks popular n8n workflows across multiple platforms using real, verifiable popularity signals.
 
-This project is designed to be API-first, automatable, and evidence-driven, suitable for immediate deployment.
+The system aggregates engagement data from sources such as YouTube, community forums, and search trends, normalizes it into a structured database, and exposes it through a clean, API-first interface suitable for automation and deployment.
 
-⸻
+This project is designed with data integrity, idempotency, and extensibility as first-class concerns.
 
-🎯 Problem Statement
+Problem Statement
+Identifying genuinely popular n8n workflows is difficult because relevant signals are fragmented across platforms such as tutorial videos on YouTube, discussions on community forums, and search interest over time. There is no unified, evidence-based view of workflow popularity.
 
-Discovering which n8n workflows are actually popular is difficult because data is scattered across:
-	•	YouTube tutorials
-	•	Community forum discussions
-	•	Search trends
+Workflow Popularity Engine solves this by ingesting platform-specific signals, normalizing them, and making them accessible via a consistent REST API.
 
-This system aggregates those signals into a single normalized database and exposes them via a REST API
+Key Capabilities
+API-first backend built with FastAPI.
+Normalized PostgreSQL data model.
+Evidence-driven popularity metrics.
+Idempotent ingestion pipelines.
+Safe re-ingestion without duplication.
+Designed for automation via scheduled jobs.
 
-⸻
+Implemented Features
+REST API for querying workflow popularity.
+PostgreSQL database with enforced uniqueness constraints.
+YouTube ingestion pipeline that fetches workflow-related videos, stores views, likes, and comments, and computes engagement ratios.
+Deduplication using (platform, source_id, country).
+Idempotent updates on repeated ingestion runs.
+Environment-safe secret management using .env.
+Modular and maintainable codebase with clean Git history.
 
-🧠 Core Features
+Planned Features
+n8n forum ingestion using the Discourse API.
+Google Trends ingestion.
+Automated ingestion using cron jobs.
+Ranking and pagination endpoints.
+Expanded API documentation.
 
-✅ Implemented
-	•	FastAPI backend with REST endpoints
-	•	PostgreSQL database with normalized schema
-	•	YouTube ingestion pipeline
-	•	Fetches workflow-related videos
-	•	Stores views, likes, comments
-	•	Calculates engagement ratios
-	•	Deduplicates using (platform, source_id, country)
-	•	Idempotent ingestion
-	•	Re-running ingestion updates metrics instead of inserting duplicates
-	•	API endpoints
-	•	List workflows
-	•	Filter by platform and country
-	•	Environment-safe secrets handling
-	•	API keys stored in .env
-	•	Clean Git history & modular architecture
+Data Model
+Each workflow record stores evidence-backed popularity metrics including workflow name, platform, source identifier, country, views, likes, comments, like-to-view ratio, and comment-to-view ratio.
 
-🚧 In Progress / Planned
-	•	n8n Forum (Discourse) ingestion
-	•	Google Trends ingestion
-	•	Cron-based automation
-	•	Pagination & ranking endpoints
-	•	Expanded documentation
+Uniqueness is enforced on the combination of platform, source_id, and country to guarantee consistency across ingestion runs.
 
-⸻
+Local Setup
+Clone the repository using git clone https://github.com/Dhyan011/workflow-popularity-engine-.git and navigate into the project directory.
 
-🏗️ Architecture Overview
+Create and activate a virtual environment using python3 -m venv .venv followed by source .venv/bin/activate.
 
-workflow-popularity-engine/
-│
-├── backend/
-│   ├── app/
-│   │   ├── api/          # API routes
-│   │   ├── db/           # Database session & utilities
-│   │   ├── models/       # SQLAlchemy models
-│   │   └── main.py       # FastAPI entrypoint
-│
-├── ingestion/
-│   ├── youtube_ingest.py # YouTube ingestion pipeline
-│   ├── forum_ingest.py   # (planned) Discourse ingestion
-│   └── trends_ingest.py  # (planned) Google Trends ingestion
-│
-├── cron/
-│   └── crontab.txt       # Scheduled ingestion jobs
-│
-├── docs/
-│   └── architecture.md  # Design notes
-│
-├── .env                 # Environment variables (not committed)
-├── README.md
-└── .gitignore
+Install dependencies with pip install -r backend/requirements.txt.
 
+Create a .env file and set DATABASE_URL and YOUTUBE_API_KEY values.
 
-⸻
+Start the API server using uvicorn backend.app.main:app –reload.
 
-🗄️ Database Schema (Workflows)
+The API will be available at http://127.0.0.1:8000 with interactive documentation at http://127.0.0.1:8000/docs.
 
-Each workflow entry stores evidence-backed popularity metrics.
+YouTube Ingestion
+Run the ingestion pipeline manually using python -m ingestion.youtube_ingest.
 
-Field	Description
-workflow_name	Workflow title or keyword
-platform	youtube, forum, or google
-source_id	Platform-specific identifier
-country	Country code (US / IN)
-views	View count
-likes	Like/upvote count
-comments	Comment/reply count
-like_to_view_ratio	Engagement metric
-comment_to_view_ratio	Engagement metric
+The ingestion process searches for n8n workflow content, fetches engagement metrics, inserts new records or updates existing ones, and prevents duplicates through enforced constraints.
 
-Uniqueness enforced on:
-(platform, source_id, country)
+Automation
+Scheduled ingestion can be enabled using cron. An example daily job would execute python -m ingestion.youtube_ingest at a fixed time.
 
-⸻
+Example API Response
+A typical response includes the workflow name, platform, country, views, likes, comments, and computed engagement ratios, providing a normalized and evidence-backed view of workflow popularity.
 
-🚀 Getting Started (Local Setup)
-
-1. Clone the repository
-
-git clone https://github.com/Dhyan011/workflow-popularity-engine-.git
-cd workflow-popularity-engine-
-
-2. Create virtual environment
-
-python3 -m venv .venv
-source .venv/bin/activate
-
-3. Install dependencies
-
-pip install -r backend/requirements.txt
-
-4. Set environment variables
-
-Create a .env file:
-
-DATABASE_URL=postgresql://localhost/workflow_popularity
-YOUTUBE_API_KEY=your_api_key_here
-
-5. Start the API
-
-uvicorn backend.app.main:app --reload
-
-API available at:
-👉 http://127.0.0.1:8000
-👉 Swagger UI: http://127.0.0.1:8000/docs
-
-⸻
-
-📡 YouTube Ingestion
-
-Run manually:
-
-python -m ingestion.youtube_ingest
-
-What it does:
-	•	Searches for n8n workflow videos
-	•	Fetches statistics
-	•	Inserts or updates records
-	•	Ensures no duplicates
-
-⸻
-
-🔄 Automation (Cron – Planned)
-
-Example cron job:
-
-0 2 * * * python -m ingestion.youtube_ingest
-
-This enables fully automated daily updates.
-
-⸻
-
-📊 API Example Response
-
-{
-  "workflow_name": "Google Sheets → Slack Automation",
-  "platform": "youtube",
-  "country": "US",
-  "views": 12500,
-  "likes": 630,
-  "comments": 88,
-  "like_to_view_ratio": 0.05,
-  "comment_to_view_ratio": 0.007
-}
-
-
-⸻
-
-🧪 Current Project Status
-
-Component	Status
-Backend API	✅ Complete
-Database schema	✅ Complete
-YouTube ingestion	✅ Complete
-Deduplication	✅ Complete
-Forum ingestion	🚧 Pending
-Google Trends ingestion	🚧 Pending
-Cron automation	🚧 Pending
-Documentation	🚧 In progress
-
-
-⸻
-
-🧩 Why This Project Matters
-
-This is not a demo app.
-
-It demonstrates:
-	•	Real API integration
-	•	Data engineering fundamentals
-	•	Backend system design
-	•	Production-ready thinking
-	•	Automation mindset
-
-⸻
-
+Project Status
+Backend API is complete.
+Database schema is complete.
+YouTube ingestion is complete.
+Deduplication logic is complete.
+Forum ingestion is in progress.
+Google Trends ingestion is planned.
+Automation is planned.
+Documentation is in progress.
