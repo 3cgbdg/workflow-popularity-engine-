@@ -7,6 +7,7 @@ dummy_data = [
     Workflow(
         workflow_name="Google Sheets → Slack Automation",
         platform="youtube",
+        source_id="video123",
         country="US",
         views=12500,
         likes=630,
@@ -17,6 +18,7 @@ dummy_data = [
     Workflow(
         workflow_name="WhatsApp Reminder Workflow",
         platform="forum",
+        source_id="topic456",
         country="IN",
         views=2500,
         likes=37,
@@ -27,6 +29,7 @@ dummy_data = [
     Workflow(
         workflow_name="n8n Slack Integration",
         platform="google",
+        source_id="sheet789",
         country="US",
         views=3600,
         likes=0,
